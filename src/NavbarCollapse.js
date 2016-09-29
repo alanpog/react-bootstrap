@@ -12,7 +12,7 @@ const contextTypes = {
 
 class NavbarCollapse extends React.Component {
   render() {
-    const { children, ...props } = this.props;
+    const { children, onSelect, ...props } = this.props;
     const navbarProps = this.context.$bs_navbar || { bsClass: 'navbar' };
 
     const bsClassName = prefix(navbarProps, 'collapse');
@@ -20,7 +20,9 @@ class NavbarCollapse extends React.Component {
     return (
       <Collapse in={navbarProps.expanded} {...props}>
         <div className={bsClassName}>
-          {children}
+          { React.Children.map(this.props.children, function (child) {
+            return React.cloneElement(child, { onSelect });
+          }) }
         </div>
       </Collapse>
     );

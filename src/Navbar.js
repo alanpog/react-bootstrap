@@ -104,6 +104,10 @@ class Navbar extends React.Component {
     };
   }
 
+  handleSelect() {
+    this.props.onToggle(false);
+  }
+
   handleToggle() {
     const { onToggle, expanded } = this.props;
 
@@ -121,40 +125,45 @@ class Navbar extends React.Component {
       className,
       children,
       ...props
-    } = this.props;
+  } = this.props;
 
-    const [bsProps, elementProps] = splitBsPropsAndOmit(props, [
-      'expanded', 'onToggle',
-    ]);
+const [bsProps, elementProps] = splitBsPropsAndOmit(props, [
+  'expanded', 'onToggle',
+]);
 
-    // will result in some false positives but that seems better
-    // than false negatives. strict `undefined` check allows explicit
-    // "nulling" of the role if the user really doesn't want one
-    if (elementProps.role === undefined && Component !== 'nav') {
-      elementProps.role = 'navigation';
-    }
+// will result in some false positives but that seems better
+// than false negatives. strict `undefined` check allows explicit
+// "nulling" of the role if the user really doesn't want one
+if (elementProps.role === undefined && Component !== 'nav') {
+  elementProps.role = 'navigation';
+}
 
-    if (inverse) {
-      bsProps.bsStyle = Style.INVERSE;
-    }
+if (inverse) {
+  bsProps.bsStyle = Style.INVERSE;
+}
 
-    const classes = {
+const classes = {
       ...getClassSet(bsProps),
-      [prefix(bsProps, 'fixed-top')]: fixedTop,
-      [prefix(bsProps, 'fixed-bottom')]: fixedBottom,
+  [prefix(bsProps, 'fixed-top')]: fixedTop,
+    [prefix(bsProps, 'fixed-bottom')]: fixedBottom,
       [prefix(bsProps, 'static-top')]: staticTop,
     };
 
-    return (
-      <Component
-        {...elementProps}
-        className={classNames(className, classes)}
-      >
-        <Grid fluid={fluid}>
-          {children}
-        </Grid>
-      </Component>
-    );
+var handleSelect = this.handleSelect;
+
+return (
+  <Component
+    {...elementProps}
+    className={classNames(className, classes) }
+    >
+    <Grid fluid={fluid}>
+      { React.Children.map(this.props.children, function (child) {
+        //TODO: probably should only do this for Navbar.Collapse children
+        return React.cloneElement(child, { onSelect: handleSelect });
+      }) }
+    </Grid>
+  </Component>
+);
   }
 }
 
@@ -179,7 +188,7 @@ function createSimpleWrapper(tag, suffix, displayName) {
         pullRight && prefix(navbarProps, 'right'),
         pullLeft && prefix(navbarProps, 'left'),
       )}
-    />
+      />
   );
 
   Wrapper.displayName = displayName;
